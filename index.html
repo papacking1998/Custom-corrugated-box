@@ -266,7 +266,18 @@ select.cs{width:auto;max-width:150px;padding:4px 6px;font-size:.82rem;border-rad
 .zoomc .zr{width:auto;padding:0 12px;font-size:.85rem;border:1px solid #b9c4d6;color:var(--brand);margin-left:4px;height:32px}
 .zoomc span{min-width:54px;text-align:center;font-weight:700;font-size:.92rem;cursor:pointer;user-select:none}
 </style>
-<style>.clinfo .otab td,.clinfo .otab th{padding:6px 8px;text-align:center}.clinfo .otab td:first-child,.clinfo .otab th:first-child{text-align:left;min-width:190px}.clinfo .otab tr.on td{background:var(--green-bg);font-weight:700}.clinfo{margin-top:6px;min-width:0;max-width:100%}.advanced>div{grid-template-columns:minmax(0,1fr)}.clinfo>div{max-width:100%}</style></head>
+<style>.clinfo .otab td,.clinfo .otab th{padding:6px 8px;text-align:center}.clinfo .otab td:first-child,.clinfo .otab th:first-child{text-align:left;min-width:190px}.clinfo .otab tr.on td{background:var(--green-bg);font-weight:700}.clinfo{margin-top:6px;min-width:0;max-width:100%}.advanced>div{grid-template-columns:minmax(0,1fr)}.clinfo>div{max-width:100%}</style><style>
+#exDlg{border:0;border-radius:14px;padding:0;width:min(860px,96vw);max-height:92vh;box-shadow:0 20px 60px rgba(0,0,0,.3);color:var(--ink);background:var(--card)}
+#exDlg::backdrop{background:rgba(23,33,43,.45)}
+#exDlg .eh{padding:16px 18px;border-bottom:1px solid var(--line)}
+#exDlg .eb{padding:12px 18px;overflow:auto;max-height:60vh}
+#exDlg .ef{padding:12px 18px;border-top:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between;align-items:center}
+#exDlg td,#exDlg th{padding:5px 4px}
+#exDlg input,#exDlg select{padding:7px 8px;font-size:.88rem}
+#exDlg .cd{min-width:170px}#exDlg .nm{min-width:130px}#exDlg .num{width:78px}
+#exDlg .del{color:var(--red);border-color:#e5b6b2;padding:6px 9px}
+#exMsg{font-size:.85rem;color:var(--red);min-height:1.2em}
+</style></head>
 <body>
 <div id="loginGate" class="gate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
   <form id="gateForm" class="gate-card" autocomplete="on" novalidate>
@@ -468,7 +479,7 @@ select.cs{width:auto;max-width:150px;padding:4px 6px;font-size:.82rem;border-rad
 
   <section class="card panel" style="margin-top:18px">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-      <div><h2>ขนาดมาตรฐานที่มี</h2><div class="note">กดแถวเพื่อใช้ขนาดนั้น · <span id="stdT"></span></div></div><div style="text-align:right"><button id="loginBtn" class="secondary hidden" type="button">🔑 เข้าสู่ระบบเพื่อแก้ไข</button> <button id="edBtn" class="secondary hidden" type="button">⚙ จัดการตารางขนาดมาตรฐาน</button> <button id="seedBtn" class="secondary hidden" type="button">⬆ นำเข้าข้อมูลที่มีอยู่ขึ้น Firebase</button><div class="sync" id="syncNote"></div></div>
+      <div><h2>ขนาดมาตรฐานที่มี</h2><div class="note">กดแถวเพื่อใช้ขนาดนั้น · <span id="stdT"></span></div></div><div style="text-align:right"><button id="loginBtn" class="secondary hidden" type="button">🔑 เข้าสู่ระบบเพื่อแก้ไข</button> <button id="edBtn" class="secondary hidden" type="button">⚙ จัดการตารางขนาดมาตรฐาน</button> <button id="exBtn" class="secondary hidden" type="button">⚙ จัดการขนาดมาตรฐานที่ไม่อยู่ในรายการ</button> <button id="seedBtn" class="secondary hidden" type="button">⬆ นำเข้าข้อมูลที่มีอยู่ขึ้น Firebase</button><div class="sync" id="syncNote"></div></div>
     </div>
     <div class="tw">
       <table><thead><tr><th>ชื่อ / เบอร์</th><th>กว้าง</th><th>ยาว</th><th>สูง</th><th>มีดไดคัท</th><th>รหัสมีด</th><th>กระดาษ</th><th></th></tr></thead><tbody id="std"></tbody></table>
@@ -480,6 +491,21 @@ select.cs{width:auto;max-width:150px;padding:4px 6px;font-size:.82rem;border-rad
   </section>
 </main>
 
+<dialog id="exDlg" aria-labelledby="exT">
+  <div class="eh"><h2 id="exT">จัดการ ขนาดมาตรฐาน ที่ไม่อยู่ในรายการของเรา</h2>
+    <div class="note">ใช้ร่วมกันทุกประเภท (ฝาชน ไปรษณีย์ หูช้าง ฝาเสียบกันขัด ฝาเสียบบนล่าง) · หน่วยเป็น <b>ซม.</b> · ตอนนี้มี <b id="exCount">0</b> ขนาด · กดบันทึกแล้วทุกคนที่เปิดหน้านี้จะเห็นทันที</div></div>
+  <div class="eb"><div id="exPasteBox" class="hidden" style="margin-bottom:12px;padding:10px;border:1px dashed var(--line);border-radius:10px">
+<div class="note">วางข้อมูลจาก Excel / Google Sheets ได้เลย 1 แถวต่อ 1 ขนาด เรียงคอลัมน์ (แยกด้วย Tab): <b>เบอร์, กว้าง, ยาว, สูง</b> (ซม.) แถวหัวตารางใส่มาได้ ระบบข้ามให้ · "ต่อท้าย/อัปเดต" ถ้าเบอร์ซ้ำกับที่มีอยู่ ระบบเปลี่ยนขนาดของเบอร์นั้นให้</div>
+<textarea id="exPasteTa" rows="6" style="width:100%;margin-top:6px;font:inherit;border:1px solid #cfd7d4;border-radius:9px;padding:8px" placeholder="M&#9;27&#9;43&#9;20"></textarea>
+<div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap"><button class="secondary" id="exPasteRep" type="button">แทนที่ทั้งหมด</button><button class="secondary" id="exPasteApp" type="button">ต่อท้าย / อัปเดต</button><button class="secondary" id="exPasteClose" type="button">ปิด</button></div>
+<div id="exPasteMsg" class="note"></div></div>
+<table><thead><tr><th>เบอร์</th><th>กว้าง (ซม.)</th><th>ยาว (ซม.)</th><th>สูง (ซม.)</th><th></th></tr></thead><tbody id="exBody"></tbody></table></div>
+  <div class="ef">
+    <div><button class="secondary" id="exAdd" type="button">+ เพิ่มแถว</button> <button class="secondary" id="exPaste" type="button">📋 วางจาก Excel</button> <button class="secondary" id="exReset" type="button">↩ คืนค่าเริ่มต้น</button></div>
+    <div id="exMsg" role="alert"></div>
+    <div><button class="secondary" id="exCancel" type="button">ยกเลิก</button> <button class="primary" id="exSave" type="button" style="width:auto;padding:9px 22px">บันทึก</button></div>
+  </div>
+</dialog>
 <dialog id="edDlg" aria-labelledby="edT">
   <div class="eh"><h2 id="edT">จัดการตารางขนาดมาตรฐาน</h2>
     <div class="note">แก้ไขเฉพาะประเภทที่เลือกอยู่ · หน่วยเป็น <span class="edU">ซม.</span> · กดบันทึกแล้วทุกคนที่เปิดหน้านี้จะเห็นทันที</div></div>
@@ -558,7 +584,7 @@ handle:[["หูหิ้ว S",13,26.5,10,1,"stock"],["หูหิ้ว L",16
 lock:[["ฝาเสียบก้นขัด S",13,20,9.5,1,"stock"],["ฝาเสียบก้นขัด M",14.5,22.5,11.5,1,"stock"],["ฝาเสียบก้นขัด L",16.5,25,12.5,1,"stock"]],
 tuck:[["กล่องฝาเสียบ",24,35,6,1,"stock"]],
 shoe:[["แบบ 1",15.9,30,10.5,1,""],["แบบ 1",17,33,13,1,""],["แบบ 1",20,32,12,1,""],["แบบ 2",14,28,10,1,""],["แบบ 2",18.5,28,9.5,1,""],["แบบ 2",20,33.5,11,1,""],["แบบ 2",21,32.5,12,1,""],["แบบ 2",32,32,14,1,""],["แบบ 2",17,30,11,1,""]]};
-var EXTRA=[["00",9.75,14,6],["0",11,17,6],["0+4",11,17,10],["AA",13,17,7],["A",14,20,6],["2A",14,20,12],["B",17,25,9],["2B",17,25,18],["B+7",17,25,16],["C",20,30,11],["C+9",20,30,20],["CD",15,15,15],["D",22,35,14],["D+11",22,35,25],["E",24,40,17],["2F",31,30,13],["F",30,45,20],["G",31,36,26],["H",40,45,34],["I",45,55,40]],EXL=[],exKey="";
+var EXTRA=[["00",9.75,14,6],["0",11,17,6],["0+4",11,17,10],["A",14,20,6],["AA",13,17,7],["2A",14,20,12],["AB",14,20,9],["AH",14,20,35],["B",17,25,9],["B+7",17,25,16],["2B",17,25,18],["BH",17,25,35],["C",20,30,11],["C+8",20,30,19],["C+9",20,30,20],["2C",20,30,22],["C+15",20,30,26],["CD",15,15,15],["D-7",22,35,7],["D",22,35,14],["D+11",22,35,25],["2D",22,35,28],["E",24,40,17],["F เล็ก",31,36,13],["F กลาง",30,45,20],["F ใหญ่",32,48,30],["2F",31,30,13],["G",31,36,26],["H",40,45,34],["I",45,55,40],["L",40,50,30],["M",27,43,20],["M+",35,45,25],["P1",24,58,17],["P2",33,58,24],["P3",20,80,20],["P4",30,100,20],["Q",36,17,8],["S+",24,37,14],["T1",11,30,60],["7",35,50,32],["ฉ",30,45,22],["ฉ+13",30,58,22]],EXL=[],exKey="",DEFX=JSON.parse(JSON.stringify(EXTRA));
 var STD=LIST.rsc,lastTp="",prevU=null;
 function hlCl(tp){document.querySelectorAll("#cltab tr[data-t],#cltab2 tr[data-t]").forEach(function(r){r.classList.toggle("on",r.dataset.t===tp)})}
 function pizzaUnit(tp){setTimeout(function(){var sel=$("unit");
@@ -839,11 +865,11 @@ function draw3d(req,po){var prod=$("productMode").classList.contains("active"),d
 function exList(){var tpx=$("type").value;return (tpx=="rsc"||tpx=="mailer"||tpx=="ear"||tpx=="lock"||tpx=="tuck")?EXTRA.filter(function(q){return !STD.some(function(x){return x[1]!=null&&Math.abs(x[1]-q[1])<.06&&Math.abs(x[2]-q[2])<.06&&Math.abs(x[3]-q[3])<.06})}):[]}
 function exoBlock(W,L,H){var EL=exList();EXL=EL;if(!EL.length)return "";var bi=-1,bd=1e9,bw=false;EL.forEach(function(q,i){var d1=Math.abs(q[1]-W)+Math.abs(q[2]-L)+Math.abs(q[3]-H),d2=Math.abs(q[1]-L)+Math.abs(q[2]-W)+Math.abs(q[3]-H),d=Math.min(d1,d2);if(d<bd){bd=d;bi=i;bw=d2<d1}});
  var qq=EL[bi],d3=[qq[1]-(bw?L:W),qq[2]-(bw?W:L),qq[3]-H],mx=Math.max.apply(0,d3.map(Math.abs));if(mx>1.5)return "";
- return '<div class="exo"><div class="lb">'+(mx<.06?"ตรงกับ":"ใกล้เคียง")+' ขนาดมาตรฐานทั่วไป (ไปรษณีย์ไทย) ที่ไม่อยู่ในรายการของเรา</div><div style="margin:4px 0 8px"><b>เบอร์ '+qq[0]+'</b> '+dmx(qq)+(mx<.06?"":' · ต่างจากที่กรอก: กว้าง '+sg(d3[0])+' · ยาว '+sg(d3[1])+' · สูง '+sg(d3[2])+' '+UL[u])+'</div><div style="margin:0 0 6px"><span class="tag" style="background:#b26a00">ไม่มีมีดไดคัท</span></div><div class="ask" style="margin-bottom:8px">สอบถามเรื่องการเก็บเงินค่ามีดไดคัทอีกครั้ง</div><button type="button" data-x="'+bi+'">ใช้ขนาดนี้</button></div>'}
+ return '<div class="exo"><div class="lb">'+(mx<.06?"ตรงกับ":"ใกล้เคียง")+' ขนาดมาตรฐาน ที่ไม่อยู่ในรายการของเรา</div><div style="margin:4px 0 8px"><b>เบอร์ '+qq[0]+'</b> '+dmx(qq)+(mx<.06?"":' · ต่างจากที่กรอก: กว้าง '+sg(d3[0])+' · ยาว '+sg(d3[1])+' · สูง '+sg(d3[2])+' '+UL[u])+'</div><div style="margin:0 0 6px"><span class="tag" style="background:#b26a00">ไม่มีมีดไดคัท</span></div><div class="ask" style="margin-bottom:8px">สอบถามเรื่องการเก็บเงินค่ามีดไดคัทอีกครั้ง</div><button type="button" data-x="'+bi+'">ใช้ขนาดนี้</button></div>'}
 function buildTable(mi,fit,req,ptop){var tpx=$("type").value;
  EXL=exList();
- var k2=tpx+"|"+u;
- if(k2!=exKey){exKey=k2;$("exwrap").innerHTML=EXL.length?'<details style="margin-top:14px"><summary>ขนาดมาตรฐานทั่วไปอื่น ที่ไม่อยู่ในรายการของเรา ('+EXL.length+' ขนาด · ไปรษณีย์ไทย)</summary><table><thead><tr><th>เบอร์</th><th>กว้าง</th><th>ยาว</th><th>สูง</th><th>สถานะ</th></tr></thead><tbody>'+EXL.map(function(q,i){return '<tr class="row" data-x="'+i+'" tabindex="0"><td><b>'+q[0]+'</b></td><td>'+fu(q[1])+'</td><td>'+fu(q[2])+'</td><td>'+fu(q[3])+'</td><td><span class="tag" style="background:#b26a00">ไม่มีมีดไดคัท</span></td></tr>'}).join("")+'</tbody></table><div class="ask" style="margin:8px 0 4px">ทุกขนาดในตารางนี้ไม่มีมีดไดคัท — สอบถามเรื่องการเก็บเงินค่ามีดไดคัทอีกครั้ง</div><div class="note">กดแถวเพื่อใช้ขนาดนี้ · ที่มา: ตารางกล่องไปรษณีย์ไทยมาตรฐาน 20 ขนาด (LazBlog)</div></details>':""}
+ var k2=tpx+"|"+u+"|"+(window.exVer||0);
+ if(k2!=exKey){exKey=k2;$("exwrap").innerHTML=EXL.length?'<details style="margin-top:14px"><summary>ขนาดมาตรฐาน ที่ไม่อยู่ในรายการของเรา ('+EXL.length+' ขนาด)</summary><div style="max-height:420px;overflow:auto;margin-top:8px"><table><thead><tr><th>เบอร์</th><th>กว้าง</th><th>ยาว</th><th>สูง</th><th>สถานะ</th></tr></thead><tbody>'+EXL.map(function(q,i){return '<tr class="row" data-x="'+i+'" tabindex="0"><td><b>'+q[0]+'</b></td><td>'+fu(q[1])+'</td><td>'+fu(q[2])+'</td><td>'+fu(q[3])+'</td><td><span class="tag" style="background:#b26a00">ไม่มีมีดไดคัท</span></td></tr>'}).join("")+'</tbody></table></div><div class="ask" style="margin:8px 0 4px">ทุกขนาดในตารางนี้ไม่มีมีดไดคัท — สอบถามเรื่องการเก็บเงินค่ามีดไดคัทอีกครั้ง</div><div class="note">กดแถวเพื่อใช้ขนาดนี้</div></details>':""}
  var allRows=STD.map(function(s,i){
   if(s[1]==null)return '<tr><td><b>'+s[0]+'</b></td><td colspan="3" class="note">ยังไม่ระบุขนาด</td><td>'+dieB(s)+'</td><td>'+codeSel(s)+'</td><td>'+papB(s)+'</td><td></td></tr>';
   var cls="row"+(i==mi?" on":"");
@@ -1005,7 +1031,7 @@ function applyRemote(key,rows){
 function startSync(){
   return onSnapshot(collection(fdb,"sizes"),snap=>{
     let n=0,t=0;remoteKeys=new Set();snapReady=true;
-    snap.forEach(d=>{remoteKeys.add(d.id);const v=d.data()||{};if(v.rows){applyRemote(d.id,v.rows);n++;if(v.updatedAt>t)t=v.updatedAt}});
+    snap.forEach(d=>{remoteKeys.add(d.id);const v=d.data()||{};if(v.rows){if(d.id==="extra")setExtra(v.rows);else applyRemote(d.id,v.rows);n++;if(v.updatedAt>t)t=v.updatedAt}});
     note(n?("ข้อมูลส่วนกลาง · อัปเดตล่าสุด "+new Date(t).toLocaleString("th-TH")):"ยังไม่มีข้อมูลส่วนกลาง — ใช้ค่าเริ่มต้นของหน้า");
     updSeed();
   },()=>note("เชื่อมข้อมูลส่วนกลางไม่ได้ — ใช้ค่าที่มากับหน้า"));
@@ -1162,9 +1188,76 @@ document.addEventListener("change",e=>{
   const tr=t.closest("tr"),o=draft[+tr.dataset.i];if(!o||o.w==null)return;
   if(o.l==null){o.l=o.w;tr.querySelector('[data-k="l"]').value=r2(o.l*sc())}
 });
+
+/* ===== ขนาดมาตรฐาน ที่ไม่อยู่ในรายการของเรา (แก้ได้โดยผู้แก้ไข เก็บที่ sizes/extra) ===== */
+let xdraft=null;
+function setExtra(rows){
+  if(!Array.isArray(rows))return;
+  const ok=rows.filter(r=>r&&r.n&&r.w>0&&r.l>0&&r.h>0);
+  EXTRA.length=0;ok.forEach(r=>EXTRA.push([String(r.n),+r.w,+r.l,+r.h]));
+  window.exVer=(window.exVer||0)+1;render();
+}
+const xRow=(o,i)=>'<tr data-i="'+i+'"><td><input class="nm" data-k="n" value="'+esc(o.n)+'" aria-label="เบอร์"></td>'+['w','l','h'].map(k=>'<td><input class="num" data-k="'+k+'" type="number" step="0.01" min="0" inputmode="decimal" value="'+esc(o[k]==null?"":o[k])+'" aria-label="'+k+'"></td>').join('')+'<td><button type="button" class="secondary del" data-xdel="'+i+'" aria-label="ลบแถว">✕</button></td></tr>';
+const xPaint=()=>{$("exBody").innerHTML=xdraft.map(xRow).join("");$("exCount").textContent=xdraft.length};
+function openEx(){xdraft=EXTRA.map(r=>({n:r[0],w:r[1],l:r[2],h:r[3]}));$("exMsg").textContent="";$("exPasteBox").classList.add("hidden");xPaint();$("exDlg").showModal()}
+function xCollect(){
+  const out=[],seen=new Set();
+  for(let i=0;i<xdraft.length;i++){
+    const o=xdraft[i],n=String(o.n||"").trim();
+    if(!n)return{err:"แถวที่ "+(i+1)+" ยังไม่ได้ใส่เบอร์"};
+    if(!(o.w>0&&o.l>0&&o.h>0))return{err:"แถวที่ "+(i+1)+" (เบอร์ "+n+") ต้องใส่ กว้าง ยาว สูง เป็นตัวเลขที่มากกว่า 0"};
+    const key=n.toLowerCase();if(seen.has(key))return{err:"เบอร์ \""+n+"\" ซ้ำกัน (แถวที่ "+(i+1)+")"};
+    seen.add(key);out.push({n:n,w:r4(o.w),l:r4(o.l),h:r4(o.h)});
+  }
+  return{rows:out};
+}
+async function xSave(){
+  const r=xCollect();if(r.err){$("exMsg").textContent=r.err;return}
+  const btn=$("exSave");btn.disabled=true;$("exMsg").textContent="";
+  try{await setDoc(doc(fdb,"sizes","extra"),{rows:r.rows,updatedAt:Date.now()});$("exDlg").close()}
+  catch(e){$("exMsg").textContent=(e&&e.code==="permission-denied")?"บันทึกไม่ได้: บัญชีนี้ไม่มีสิทธิ์ หรือกฎ Firestore ยังไม่รองรับ 'extra' (ต้องเพิ่มในรายการประเภทของกฎ)":"บันทึกไม่สำเร็จ ลองใหม่อีกครั้ง"}
+  finally{btn.disabled=false}
+}
+function xParse(txt){
+  const rows=[],bad=[];let first=true;
+  txt.split(/\r?\n/).forEach((line,i)=>{
+    if(!line.trim())return;
+    const c=(line.indexOf("\t")>=0?line.split("\t"):line.split(",")).map(x=>x.trim());
+    const nn=x=>parseFloat(String(x||"").replace(/,/g,"")),w=nn(c[1]),l=nn(c[2]),h=nn(c[3]);
+    if(first&&isNaN(w)){first=false;return}
+    first=false;
+    if(!c[0]||!(w>0&&l>0&&h>0)){bad.push(i+1);return}
+    rows.push({n:c[0],w:r4(w),l:r4(l),h:r4(h)});
+  });
+  return{rows,bad};
+}
+function xPaste(replace){
+  const r=xParse($("exPasteTa").value);
+  if(!r.rows.length){$("exPasteMsg").textContent="ไม่พบแถวข้อมูลที่ใช้ได้ (ต้องเป็น เบอร์, กว้าง, ยาว, สูง)"+(r.bad.length?" · แถวที่ข้าม: "+r.bad.join(", "):"");return}
+  let added=0,upd=0;
+  if(replace){const m=new Map();r.rows.forEach(x=>m.set(x.n.toLowerCase(),x));xdraft=[...m.values()];added=xdraft.length}
+  else r.rows.forEach(x=>{const k=x.n.toLowerCase(),i=xdraft.findIndex(y=>String(y.n).trim().toLowerCase()===k);if(i>=0){xdraft[i]=x;upd++}else{xdraft.push(x);added++}});
+  xPaint();$("exPasteTa").value="";
+  $("exPasteMsg").textContent=(replace?"แทนที่ด้วย "+added+" แถว":"เพิ่มใหม่ "+added+" แถว · อัปเดตเบอร์เดิม "+upd+" แถว")+(r.bad.length?" · ข้ามแถวที่ข้อมูลไม่ครบ: "+r.bad.join(", "):"")+" · ตรวจดูแล้วกดบันทึก";
+}
+document.addEventListener("input",e=>{
+  const t=e.target;if(!t.closest||!t.closest("#exBody")||!xdraft)return;
+  const i=+t.closest("tr").dataset.i,k=t.dataset.k;if(!xdraft[i]||!k)return;
+  xdraft[i][k]=k==="n"?t.value:(t.value===""?null:+t.value);
+});
 document.addEventListener("click",e=>{
   const b=e.target.closest&&e.target.closest("button");if(!b)return;
-  if(b.id==="edBtn")openEd();
+  if(b.id==="exBtn")openEx();
+  else if(b.id==="exAdd"){xdraft.push({n:"",w:null,l:null,h:null});xPaint()}
+  else if(b.id==="exCancel")$("exDlg").close();
+  else if(b.id==="exReset"){if(confirm("คืนค่าเริ่มต้น ("+DEFX.length+" ขนาดที่มากับหน้าเว็บ)? ยังไม่บันทึกจนกว่าจะกดบันทึก")){xdraft=DEFX.map(r=>({n:r[0],w:r[1],l:r[2],h:r[3]}));xPaint()}}
+  else if(b.id==="exPaste"){$("exPasteBox").classList.toggle("hidden");$("exPasteMsg").textContent=""}
+  else if(b.id==="exPasteClose")$("exPasteBox").classList.add("hidden");
+  else if(b.id==="exPasteRep"){if(confirm("แทนที่รายการทั้งหมดด้วยข้อมูลที่วาง?"))xPaste(true)}
+  else if(b.id==="exPasteApp")xPaste(false);
+  else if(b.dataset.xdel!==undefined&&b.closest("#exBody")){xdraft.splice(+b.dataset.xdel,1);xPaint()}
+  else if(b.id==="exSave")xSave();
+  else if(b.id==="edBtn")openEd();
   else if(b.id==="edAdd"){draft.push({n:"",w:null,l:null,h:null,d:null,p:"",k:[],c:false});paint()}
   else if(b.id==="edCancel")$("edDlg").close();
   else if(b.id==="edReset"){if(confirm("คืนค่าเริ่มต้นของประเภทนี้? (ยังไม่บันทึกจนกว่าจะกดบันทึก)")){draft=DEF[$("type").value].map(toO);paint()}}
@@ -1185,7 +1278,7 @@ document.addEventListener("click",e=>{
 });
 
 const gm=(t,ok)=>{const e=$("gateMsg");e.textContent=t||"";e.className=ok?"ok":""};
-const lockUI=()=>{document.documentElement.classList.add("locked");if(unsub){unsub();unsub=null}isAdmin=false;snapReady=false;$("edBtn").classList.add("hidden");$("seedBtn").classList.add("hidden");$("outBtn").hidden=true;$("userChip").textContent="";$("gatePw").value=""};
+const lockUI=()=>{document.documentElement.classList.add("locked");if(unsub){unsub();unsub=null}isAdmin=false;snapReady=false;$("edBtn").classList.add("hidden");$("exBtn").classList.add("hidden");$("seedBtn").classList.add("hidden");$("outBtn").hidden=true;$("userChip").textContent="";$("gatePw").value=""};
 const unlockUI=u=>{document.documentElement.classList.remove("locked");$("outBtn").hidden=false;$("userChip").textContent=u.email;$("loginBtn").classList.remove("hidden");$("loginBtn").textContent="ออกจากระบบ ("+u.email+")";gm("")};
 const errTh=c=>({"auth/invalid-credential":"อีเมลหรือรหัสผ่านไม่ถูกต้อง","auth/wrong-password":"อีเมลหรือรหัสผ่านไม่ถูกต้อง","auth/user-not-found":"อีเมลหรือรหัสผ่านไม่ถูกต้อง","auth/invalid-email":"รูปแบบอีเมลไม่ถูกต้อง","auth/too-many-requests":"ลองผิดหลายครั้ง รอสักครู่แล้วลองใหม่","auth/network-request-failed":"เชื่อมต่ออินเทอร์เน็ตไม่ได้","auth/user-disabled":"บัญชีนี้ถูกปิดการใช้งาน"})[c]||"เข้าสู่ระบบไม่สำเร็จ ลองใหม่อีกครั้ง";
 if(/^YOUR_/.test(firebaseConfig.apiKey)){
@@ -1210,7 +1303,7 @@ if(/^YOUR_/.test(firebaseConfig.apiKey)){
     if(!stf){gm("บัญชีนี้ยังไม่ได้รับสิทธิ์ใช้งาน ติดต่อผู้ดูแลระบบ");await signOut(auth);return}
     isAdmin=adm;unlockUI(u);
     if(!unsub)unsub=startSync();
-    $("edBtn").classList.toggle("hidden",!isAdmin);updSeed();
+    $("edBtn").classList.toggle("hidden",!isAdmin);$("exBtn").classList.toggle("hidden",!isAdmin);updSeed();
   });
 }
 </script>
